@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name         Aalto Space Filter
 // @namespace    https://simonaatula.fi/
-// @version      0.1
+// @version      0.1.1
 // @description  Makes Aalto Space reservations easier by hiding non-bookable spaces
 // @author       Simo Naatula
+// @updateURL    https://github.com/naatula/aalto-space-filter/raw/master/aalto-space-filter.user.js
 // @match        https://booking.aalto.fi/aaltospace/*
 // @grant        none
 // ==/UserScript==
