@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Aalto Space Filter
 // @namespace    https://simonaatula.fi/
-// @version      0.1.1
+// @version      0.2
 // @description  Makes Aalto Space reservations easier by hiding non-bookable spaces
 // @author       Simo Naatula
 // @updateURL    https://github.com/naatula/aalto-space-filter/raw/master/aalto-space-filter.user.js
@@ -11,22 +11,44 @@
 /* global $ */
 
 (function(){
-    let lang = 0;
-    let count = 0;
-    $('.col-sm-4.col-lg-4.col-md-4').each(function(){
-        let text = $(this).find($('.ratings .pull-right'))[0].innerText.match(/not bookable|ei varattavissa/);
+  let query = window.location.search
+  if(query.includes('page=building') && !query.includes('room_id=')){
+    let languageString = new URLSearchParams($('nav.navbar .container ul.nav.navbar-nav.pull-right li.active a')[0].href).get('language')
+    let lang = 0
+    if(languageString == 'fin'){ lang = 1 }
+    if(query.includes('floor_id=')){
+      let count = 0
+      $('.col-sm-4.col-lg-4.col-md-4').each(function(){
+        let text = $(this).find($('.ratings .pull-right'))[0].innerText.match(/not bookable|ei varattavissa/)
         if(text != null){
-            if(!count && text.includes('ei varattavissa')){ lang = 1; }
-            $(this).addClass('hidden non-bookable');
-            $(this).appendTo($(this).parent());
-            count++;
+          $(this).addClass('hidden non-bookable')
+          $(this).appendTo($(this).parent())
+          count++
         }
-    });
-    if(count){
-        let btn = [`Show ${count} non-bookable spaces`, `Näytä ${count} ei-varattavaa tilaa`][lang];
+      })
+      if(count){
+        let btn = [`Show ${count} non-bookable spaces`, `Näytä ${count} ei-varattavaa tilaa`][lang]
         $('.container .row .col-md-9').append(`<a class='btn'>${btn}</a>`).children().last().click(function(){
-            $(this).addClass('hidden');
-            $('.non-bookable').each(function(){ $(this).removeClass('hidden'); });
-        });
+          $(this).addClass('hidden')
+          $('.non-bookable').each(function(){ $(this).removeClass('hidden') })
+        })
+      }
+    } else {
+      $('.col-sm-4.col-lg-4.col-md-4').each(function(){
+        let floor = $(this)
+        let link = floor.find('a')[0].href
+        $.get(link, function(data){
+          let count = $(data).find('.col-sm-4.col-lg-4.col-md-4 .ratings .pull-right').filter(function(index){ return !this.innerText.includes(',') }).size()
+          let text = ['No bookable spaces', 'Ei varattavia tiloja'][lang]
+          let textElement = floor.find('.ratings .pull-right')[0]
+          if(count){
+            $(textElement).css('color', 'green')
+            if(count > 1){ text = [`${count} bookable spaces`, `${count} varattavaa tilaa`][lang] }
+            else { text = [`${count} bookable space`, `${count} varattava tila`][lang] }
+          }
+          textElement.innerText = text
+        })
+      })
     }
-})();
+  }
+})()
