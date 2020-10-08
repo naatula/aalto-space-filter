@@ -19,8 +19,8 @@
     if(query.includes('floor_id=')){
       let count = 0
       $('.col-sm-4.col-lg-4.col-md-4').each(function(){
-        let text = $(this).find($('.ratings .pull-right'))[0].innerText.match(/not bookable|ei varattavissa/)
-        if(text != null){
+        let nonBookable = $(this).find($('.ratings .pull-right'))[0].innerText.includes(',')
+        if(nonBookable){
           $(this).addClass('hidden non-bookable')
           $(this).appendTo($(this).parent())
           count++
