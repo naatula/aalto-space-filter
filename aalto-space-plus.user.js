@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Aalto Space Plus
 // @namespace    https://simonaatula.fi/
-// @version      0.3
+// @version      0.4
 // @description  Makes browsing Aalto Space easier
 // @author       Simo Naatula
 // @updateURL    https://github.com/naatula/aalto-space-plus/raw/master/aalto-space-plus.user.js
@@ -11,6 +11,10 @@
 /* global $ */
 
 (function(){
+  function isReservable(card){
+    return !card.find('.ratings .pull-right')[0].innerText.includes(',')
+  }
+
   let query = window.location.search
   if(query.includes('page=building') && !query.includes('room_id=')){
     let languageString = new URLSearchParams($('nav.navbar .container ul.nav.navbar-nav.pull-right li.active a')[0].href).get('language')
@@ -20,8 +24,7 @@
       let count = 0
       $('.col-sm-4.col-lg-4.col-md-4').each(function(){
         let card = $(this)
-        let nonBookable = card.find($('.ratings .pull-right'))[0].innerText.includes(',')
-        if(nonBookable){
+        if(!isReservable(card)){
           card.addClass('hidden non-bookable')
           card.appendTo($(this).parent())
           count++
@@ -45,11 +48,16 @@
         let card = $(this)
         let link = card.find('a')[0].href
         $.get(link, function(data){
-          let count = $(data).find('.col-sm-4.col-lg-4.col-md-4').filter(function(index){
-            return (!$(this).find('.ratings .pull-right')[0].innerText.includes(',') && $(this).find('.caption .stat-label-booked').length == 0)
-          }).size()
+          let spaces = new Map();
+          ['free','inuse','booked'].forEach(function(status){
+            spaces.set(status, $(data).find('.col-sm-4.col-lg-4.col-md-4').filter(function(index){
+              return (isReservable($(this)) && $(this).find('.caption .stat-label-' + status).length > 0)
+            }).size())
+            card.find('.stat-label-' + status + ' .stat-label')[0].innerText = spaces.get(status)
+          })
           let text = ['No bookable spaces', 'Ei varattavia tiloja'][lang]
           let textElement = card.find('.ratings .pull-right')[0]
+          let count = spaces.get('free') + spaces.get('inuse')
           if(count){
             $(textElement).css('color', 'green')
             if(count > 1){ text = [`${count} spaces available`, `${count} tilaa saatavilla`][lang] }
