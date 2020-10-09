@@ -43,7 +43,7 @@
           let textElement = floor.find('.ratings .pull-right')[0]
           if(count){
             $(textElement).css('color', 'green')
-            if(count > 1){ text = [`${count} bookable spaces`, `${count} varattavaa tilaa`][lang] }
+            if(count > 1){ text = [`${count} spaces available`, `${count} tilaa saatavilla`][lang] }
             else { text = [`${count} bookable space`, `${count} varattava tila`][lang] }
           }
           textElement.innerText = text
