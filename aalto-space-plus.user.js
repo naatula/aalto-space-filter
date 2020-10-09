@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Aalto Space Plus
 // @namespace    https://simonaatula.fi/
-// @version      0.4
+// @version      0.4.1
 // @description  Makes browsing Aalto Space easier
 // @author       Simo Naatula
 // @updateURL    https://github.com/naatula/aalto-space-plus/raw/master/aalto-space-plus.user.js
@@ -60,8 +60,8 @@
           let count = spaces.get('free') + spaces.get('inuse')
           if(count){
             $(textElement).css('color', 'green')
-            if(count > 1){ text = [`${count} spaces available`, `${count} tilaa saatavilla`][lang] }
-            else { text = [`${count} bookable space`, `${count} varattava tila`][lang] }
+            if(count > 1){ text = [`${count} spaces available`, `${count} tilaa käytettävissä`][lang] }
+            else { text = [`${count} space available`, `${count} tila käytettävissä`][lang] }
           }
           textElement.innerText = text
         })
