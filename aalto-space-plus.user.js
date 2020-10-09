@@ -20,15 +20,16 @@
       let count = 0
       $('.col-sm-4.col-lg-4.col-md-4').each(function(){
         let card = $(this)
-        let nonBookable = $(this).find($('.ratings .pull-right'))[0].innerText.includes(',')
+        let nonBookable = card.find($('.ratings .pull-right'))[0].innerText.includes(',')
         if(nonBookable){
-          $(this).addClass('hidden non-bookable')
-          $(this).appendTo($(this).parent())
+          card.addClass('hidden non-bookable')
+          card.appendTo($(this).parent())
           count++
         }else if(card.find('.stat-label-inuse').length > 0){
           let link = card.find('a')[0].href
           $.get(link, function(data){
-            card.find('.ratings .pull-right')[0].innerText = $(data).find('.col-md-9 .ratings .pull-right')[0].innerText.split(' / ').reverse().join(' / ')
+            card.find('.ratings .pull-right')[0].innerText =
+              $(data).find('.col-md-9 .ratings .pull-right')[0].innerText.split(' / ').reverse().join(' / ')
           })
         }
       })
@@ -41,12 +42,14 @@
       }
     } else {
       $('.col-sm-4.col-lg-4.col-md-4').each(function(){
-        let floor = $(this)
-        let link = floor.find('a')[0].href
+        let card = $(this)
+        let link = card.find('a')[0].href
         $.get(link, function(data){
-          let count = $(data).find('.col-sm-4.col-lg-4.col-md-4').filter(function(index){ return (!$(this).find('.ratings .pull-right')[0].innerText.includes(',') && $(this).find('.caption .stat-label-booked').length == 0) }).size()
+          let count = $(data).find('.col-sm-4.col-lg-4.col-md-4').filter(function(index){
+            return (!$(this).find('.ratings .pull-right')[0].innerText.includes(',') && $(this).find('.caption .stat-label-booked').length == 0)
+          }).size()
           let text = ['No bookable spaces', 'Ei varattavia tiloja'][lang]
-          let textElement = floor.find('.ratings .pull-right')[0]
+          let textElement = card.find('.ratings .pull-right')[0]
           if(count){
             $(textElement).css('color', 'green')
             if(count > 1){ text = [`${count} spaces available`, `${count} tilaa saatavilla`][lang] }
