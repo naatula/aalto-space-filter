@@ -19,11 +19,17 @@
     if(query.includes('floor_id=')){
       let count = 0
       $('.col-sm-4.col-lg-4.col-md-4').each(function(){
+        let card = $(this)
         let nonBookable = $(this).find($('.ratings .pull-right'))[0].innerText.includes(',')
         if(nonBookable){
           $(this).addClass('hidden non-bookable')
           $(this).appendTo($(this).parent())
           count++
+        }else if(card.find('.stat-label-inuse').length > 0){
+          let link = card.find('a')[0].href
+          $.get(link, function(data){
+            card.find('.ratings .pull-right')[0].innerText = $(data).find('.col-md-9 .ratings .pull-right')[0].innerText.split(' / ').reverse().join(' / ')
+          })
         }
       })
       if(count){
