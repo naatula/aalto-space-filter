@@ -3,6 +3,7 @@ This is a userscript designed to improve the [Aalto Space Web App](https://booki
 ## Features
 - Hides spaces not available for reservation
 - Shows the amount of free seats in space listing for non-empty spaces
+- Considers only reservable spaces in the free, in use and booked room quantities in floor listing
 - Displays the amount of available spaces in floor listing
 ## Installation
 1. Install [Tampermonkey](https://www.tampermonkey.net)
