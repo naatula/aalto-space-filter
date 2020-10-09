@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Aalto Space Plus
 // @namespace    https://simonaatula.fi/
-// @version      0.4.1
+// @version      0.4.2
 // @description  Makes browsing Aalto Space easier
 // @author       Simo Naatula
 // @updateURL    https://github.com/naatula/aalto-space-plus/raw/master/aalto-space-plus.user.js
@@ -15,6 +15,12 @@
     return !card.find('.ratings .pull-right')[0].innerText.includes(',')
   }
 
+  function setFooter(){
+    $('footer').css('margin-bottom', '50px')
+    $('footer .col-lg-12 div')[0].innerHTML = '<a class="btn btn-default" href="https://github.com/naatula/aalto-space-plus/" target="_blank"><samp>Aalto Space Plus</samp></a>'
+  }
+  
+  setFooter()
   let query = window.location.search
   if(query.includes('page=building') && !query.includes('room_id=')){
     let languageString = new URLSearchParams($('nav.navbar .container ul.nav.navbar-nav.pull-right li.active a')[0].href).get('language')
