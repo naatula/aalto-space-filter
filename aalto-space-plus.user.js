@@ -38,7 +38,7 @@
         let floor = $(this)
         let link = floor.find('a')[0].href
         $.get(link, function(data){
-          let count = $(data).find('.col-sm-4.col-lg-4.col-md-4 .ratings .pull-right').filter(function(index){ return !this.innerText.includes(',') }).size()
+          let count = $(data).find('.col-sm-4.col-lg-4.col-md-4').filter(function(index){ return (!$(this).find('.ratings .pull-right')[0].innerText.includes(',') && $(this).find('.caption .stat-label-booked').length == 0) }).size()
           let text = ['No bookable spaces', 'Ei varattavia tiloja'][lang]
           let textElement = floor.find('.ratings .pull-right')[0]
           if(count){
