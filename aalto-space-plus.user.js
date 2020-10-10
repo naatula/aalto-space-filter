@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Aalto Space Plus
 // @namespace    https://simonaatula.fi/
-// @version      0.4.3
+// @version      0.4.4
 // @description  Makes browsing Aalto Space easier
 // @author       Simo Naatula
 // @updateURL    https://github.com/naatula/aalto-space-plus/raw/master/aalto-space-plus.user.js
@@ -38,7 +38,7 @@
     })
     if(count){
       let btn = [`Show ${count} non-bookable spaces`, `Näytä ${count} ei-varattavaa tilaa`][lang]
-      $('.container .row .col-md-9').append(`<a class='btn'>${btn}</a>`).children().last().click(function(){
+      $('.container .row .col-md-9').append(`<a class='btn btn-link'>${btn}</a>`).children().last().click(function(){
         $(this).addClass('hidden')
         $('.non-bookable').each(function(){ $(this).removeClass('hidden') })
       })
