@@ -68,12 +68,16 @@
 
   function spaceList(){
     let count = 0
+    let content = $('.container .row .col-md-9')
+    content.append($(`<h4 class="non-bookable hidden">${['Not bookable', 'Ei varattavissa'][lang]}</h4>`))
+    let nonBookables = $('<div class="non-bookable row hidden"></div>')
+    content.append(nonBookables)
     $('.col-sm-4.col-lg-4.col-md-4').each(function(){
       let card = $(this)
       addTagToCard(card)
       if(!isReservable(card)){
-        card.addClass('hidden non-bookable')
-        card.appendTo($(this).parent())
+        card.addClass('non-bookable')
+        card.appendTo(nonBookables)
         count++
       }else if(card.find('.stat-label-inuse').length > 0){
         let link = card.find('a')[0].href
