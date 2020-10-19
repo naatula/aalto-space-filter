@@ -101,13 +101,18 @@
     let id = line.text().split(' ')[0]
     let type = getSpaceType(id)
     if(type > 0){
-      line.append(tagGenerator(type))
+      line.append('<br>' + tagGenerator(type))
     }
   }
 
-  function tagGenerator(type){
+  function tagGenerator(type, count = 0){
     let string = [['Other','Muu'], ['Silent','Hiljainen'], ['Shared','Jaettu'], ['Group','Ryhmätyö'],][type][lang]
-    return `<br><div class="badge" style="font-weight: inherit; background: #${["555","753bbd","286090","3c763d"][type]};">${string}</div>`
+    let color = ["555","753bbd","286090","3c763d"][type]
+    if(count){
+      return ` <span class="badge" style="font-weight: inherit; background: #${color};">${count} ⨯ ${string}</span>`
+    } else {
+      return ` <span class="badge" style="font-weight: inherit; background: #${color};">${string}</span>`
+    }
   }
 
   function floorList(){
@@ -115,22 +120,32 @@
       let card = $(this)
       let link = card.find('a')[0].href
       $.get(link, function(data){
+        let spaceCards = $(data).find('.col-sm-4.col-lg-4.col-md-4')
         let spaces = new Map();
         ['free','inuse','booked'].forEach(function(status){
-          spaces.set(status, $(data).find('.col-sm-4.col-lg-4.col-md-4').filter(function(index){
+          spaces.set(status, spaceCards.filter(function(index){
             return (isReservable($(this)) && $(this).find('.caption .stat-label-' + status).length > 0)
           }).size())
           card.find('.stat-label-' + status + ' .stat-label')[0].innerText = spaces.get(status)
         })
-        let text = ['No bookable spaces', 'Ei varattavia tiloja'][lang]
-        let textElement = card.find('.ratings .pull-right')[0]
-        let count = spaces.get('free') + spaces.get('inuse')
-        if(count){
-          $(textElement).css('color', 'green')
-          if(count > 1){ text = [`${count} spaces available`, `${count} tilaa saatavilla`][lang] }
-          else { text = [`${count} space available`, `${count} tila saatavilla`][lang] }
+
+        let text = ['No available spaces', 'Ei tiloja saatavilla'][lang]
+        card.find('.ratings').html('<p></p>')
+        let textElement = card.find('.ratings p')[0]
+        var availableCounts = []
+        spaceCards.filter(function(index){
+          let type = getSpaceType($(this).find('h4 + p').text().split(' ')[0])
+          if(isReservable($(this))){
+            availableCounts[type] = (availableCounts[type] || 0) + 1
+          }
+        })
+        if(availableCounts.length == 0){
+          textElement.innerText = text
+        } else {
+          availableCounts.forEach(function(value, index){
+            $(textElement).prepend(tagGenerator(index, value))
+          })
         }
-        textElement.innerText = text
       })
     })
   }
