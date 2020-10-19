@@ -12,47 +12,47 @@
 
 (function(){
 
-  function getSpaceType(id, buildingId = new URLSearchParams(window.location.search).get('building_id')){
-    const spaceTypes = new Map([
-      ['A034 R001', 2],
-      ['M134 R001', 2],
-      ['M233 R001', 1],
-      ['M234 R001', 1],
-      ['U250a R001', 2],
-      ['U264 R001', 2],
-      ['U358 R001', 2],
-      ['U405a R001', 1],
-      ['U406a R001', 2],
-      ['U406b R001', 2],
-      ['Y228a R001', 2],
-      ['Y228b R001', 2],
-      ['Y229a R001', 2],
-      ['Y229c R001', 2],
-      ['Y307 R001', 2],
-      ['Y307a R001', 2],
-      ['Y308 R001', 1],
-      ['Y309b R001', 1],
-      ['Y313 R001', 1],
-      ['M322 R001', 1],
-      ['Y346 R001', 2],
-      ['Y405 R001', 1],
-      ['M102 R028', 2],
-      ['A133 R030', 2],
-      ['C206 R030', 2],
-      ['2006 R037', 1],
-      ['A302 R011', 2],
-      ['C301 R011', 1],
-      ['D311 R011', 2],
-      ['201 R008', 1],
-      ['202 R008', 2],
-      ['214 R008', 2],
-      ['106 R015', 3],
-      ['107 R015', 3],
-      ['108 R015', 3],
-      ['109 R015', 3],
-      ['113 R015', 2],
-      ['204 R015', 1]])
+  const spaceTypes = new Map([
+    ['A034 R001', 2],
+    ['M134 R001', 2],
+    ['M233 R001', 1],
+    ['M234 R001', 1],
+    ['U250a R001', 2],
+    ['U264 R001', 2],
+    ['U358 R001', 2],
+    ['U405a R001', 1],
+    ['U406a R001', 2],
+    ['U406b R001', 2],
+    ['Y228a R001', 2],
+    ['Y228b R001', 2],
+    ['Y229a R001', 2],
+    ['Y229c R001', 2],
+    ['Y307 R001', 2],
+    ['Y307a R001', 2],
+    ['Y308 R001', 1],
+    ['Y309b R001', 1],
+    ['Y313 R001', 1],
+    ['M322 R001', 1],
+    ['Y346 R001', 2],
+    ['Y405 R001', 1],
+    ['M102 R028', 2],
+    ['A133 R030', 2],
+    ['C206 R030', 2],
+    ['2006 R037', 1],
+    ['A302 R011', 2],
+    ['C301 R011', 1],
+    ['D311 R011', 2],
+    ['201 R008', 1],
+    ['202 R008', 2],
+    ['214 R008', 2],
+    ['106 R015', 3],
+    ['107 R015', 3],
+    ['108 R015', 3],
+    ['109 R015', 3],
+    ['113 R015', 2],
+    ['204 R015', 1]])
 
+  function getSpaceType(id, buildingId = new URLSearchParams(window.location.search).get('building_id')){
     let r = spaceTypes.get(`${id} ${buildingId}`)
     if(r == null){ return 0 } else { return r }
   }
@@ -132,6 +132,7 @@
         let text = ['No available spaces', 'Ei tiloja saatavilla'][lang]
         card.find('.ratings').html('<p></p>')
         let textElement = card.find('.ratings p')[0]
+        $(textElement).css('height', '3em')
         var availableCounts = []
         spaceCards.filter(function(index){
           let type = getSpaceType($(this).find('h4 + p').text().split(' ')[0])
@@ -158,13 +159,36 @@
     }
   }
 
+  function buildingList(){
+    $('.col-sm-4.col-lg-4.col-md-4').each(function(){
+      let card = $(this)
+      let line = card.find('.caption p')
+      line.parent().css('height', '120px')
+      var building = new URLSearchParams(card.find('a')[0].href).get('building_id')
+      console.log(line,building)
+      var existingTypes = []
+      spaceTypes.forEach(function(v,k){
+        if(k.split(' ')[1] == building){
+          existingTypes[v] = true
+        }
+      })
+      if(existingTypes.length){
+        line.append('<br>')
+        existingTypes.forEach(function(type, index){
+          line.append(tagGenerator(index))
+        })
+      } else {
+        card.parent().append(card)
+      }
+    })
+  }
+
   setFooter()
   let query = window.location.search
+  let languageString = new URLSearchParams($('nav.navbar .container ul.nav.navbar-nav.pull-right li.active a')[0].href).get('language')
+  var lang = 0
+  if(languageString == 'fin'){ lang = 1 }
   if(query.includes('page=building')){
-    let languageString = new URLSearchParams($('nav.navbar .container ul.nav.navbar-nav.pull-right li.active a')[0].href).get('language')
-    var lang = 0
-    if(languageString == 'fin'){ lang = 1 }
-
     if(query.includes('room_id=')){
       spacePage()
     } else if(query.includes('floor_id=')){
@@ -172,5 +196,7 @@
     } else {
       floorList()
     }
+  } else if(['/aaltospace/', '/aaltospace/index.php'].includes(window.location.pathname)){
+    buildingList()
   }
 })()
