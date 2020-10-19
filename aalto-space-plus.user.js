@@ -136,12 +136,8 @@
   }
 
   function spacePage(){
-    console.log('space')
     let line = $('.caption-full > h4 + p')
-    console.log(line)
-    console.log(line.text().split(' ')[0])
     let type = getSpaceType(line.text().split(' ')[0])
-    console.log(type)
     if(type > 0){
       line.append(tagGenerator(type))
     }
