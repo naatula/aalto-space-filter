@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Aalto Space Plus
 // @namespace    https://simonaatula.fi/
-// @version      0.5
+// @version      0.5.1
 // @description  Makes browsing Aalto Space easier
 // @author       Simo Naatula
 // @updateURL    https://github.com/naatula/aalto-space-plus/raw/master/aalto-space-plus.user.js
@@ -64,6 +64,32 @@
   function setFooter(){
     $('footer').css('margin-bottom', '50px')
     $('footer .col-lg-12 div')[0].innerHTML = '<a class="btn btn-default" href="https://github.com/naatula/aalto-space-plus/" target="_blank"><samp>Aalto Space Plus</samp></a>'
+  }
+
+  function applyGridStyles(){
+    $('head').append(`
+    <style>
+    .container .row .col-md-9 .row {
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+    .container .row .col-md-9 .row::before, .container .row .col-md-9 .row::after {
+      content: none;
+    }
+    .container .row .col-md-9 .row .col-sm-4.col-lg-4.col-md-4 {
+      width: 100%;
+      min-width: 0;
+    }
+    .container .row .col-md-9 .row .col-sm-4.col-lg-4.col-md-4 .thumbnail .caption {
+      height: auto;
+    }
+    @media (min-width: 768px) {
+      .container .row .col-md-9 .row {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+    }
+    </style>
+    `)
   }
 
   function spaceList(){
@@ -163,7 +189,6 @@
     $('.col-sm-4.col-lg-4.col-md-4').each(function(){
       let card = $(this)
       let line = card.find('.caption p')
-      line.parent().css('height', '120px')
       var building = new URLSearchParams(card.find('a')[0].href).get('building_id')
       var existingTypes = []
       spaceTypes.forEach(function(v,k){
@@ -172,9 +197,10 @@
         }
       })
       if(existingTypes.length){
-        line.append('<br>')
+        let tags = $('<p></p>')
+        line.after(tags)
         existingTypes.forEach(function(type, index){
-          line.append(tagGenerator(index))
+          tags.append(tagGenerator(index))
         })
       } else {
         card.parent().append(card)
@@ -183,6 +209,7 @@
   }
 
   setFooter()
+  applyGridStyles()
   let query = window.location.search
   let languageString = new URLSearchParams($('nav.navbar .container ul.nav.navbar-nav.pull-right li.active a')[0].href).get('language')
   var lang = 0
