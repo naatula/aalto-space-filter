@@ -165,7 +165,6 @@
       let line = card.find('.caption p')
       line.parent().css('height', '120px')
       var building = new URLSearchParams(card.find('a')[0].href).get('building_id')
-      console.log(line,building)
       var existingTypes = []
       spaceTypes.forEach(function(v,k){
         if(k.split(' ')[1] == building){
