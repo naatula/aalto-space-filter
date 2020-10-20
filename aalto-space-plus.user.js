@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Aalto Space Plus
 // @namespace    https://simonaatula.fi/
-// @version      0.5.5
+// @version      0.5.6
 // @description  Makes browsing Aalto Space easier
 // @author       Simo Naatula
 // @updateURL    https://github.com/naatula/aalto-space-plus/raw/master/aalto-space-plus.user.js
@@ -51,22 +51,22 @@
   function applyGridStyles(){
     $('head').append(`
     <style>
-    .container .row .col-md-9 .row {
+    .container > .row > .col-md-9 > .row {
       display: grid;
       grid-template-columns: 1fr;
     }
-    .container .row .col-md-9 .row::before, .container .row .col-md-9 .row::after {
+    .container > .row > .col-md-9 > .row::before, .container > .row > .col-md-9 > .row::after {
       content: none;
     }
-    .container .row .col-md-9 .row .col-sm-4.col-lg-4.col-md-4 {
+    .container > .row > .col-md-9 > .row > .col-sm-4.col-lg-4.col-md-4 {
       width: 100%;
       min-width: 0;
     }
-    .container .row .col-md-9 .row .col-sm-4.col-lg-4.col-md-4 .thumbnail .caption {
+    .container > .row > .col-md-9 > .row > .col-sm-4.col-lg-4.col-md-4 > .thumbnail > .caption {
       height: auto;
     }
     @media (min-width: 768px) {
-      .container .row .col-md-9 .row {
+      .container > .row > .col-md-9 > .row {
         grid-template-columns: 1fr 1fr 1fr;
       }
     }
