@@ -19,8 +19,8 @@
 
   function updateAndRunMain(){
     GM_xmlhttpRequest({
-      method: "GET",
-      url: "https://simonaatula.fi/dev/aalto-space-types.json",
+      method: 'GET',
+      url: 'https://simonaatula.fi/dev/aalto-space-types.json',
       onload: function(response) {
         try {
           let json = JSON.parse(response.responseText)
@@ -29,11 +29,11 @@
             GM_setValue('types', json['data']);
             spaceTypes = json['data']
           } else {
-            console.log("Version mismatch")
+            console.log('Version mismatch')
           }
           main()
         } catch(e) {
-          console.log("Update failed")
+          console.log('Update failed')
           main()
         }
       }
