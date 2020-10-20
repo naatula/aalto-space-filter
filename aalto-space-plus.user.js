@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Aalto Space Plus
 // @namespace    https://simonaatula.fi/
-// @version      0.5.4
+// @version      0.5.5
 // @description  Makes browsing Aalto Space easier
 // @author       Simo Naatula
 // @updateURL    https://github.com/naatula/aalto-space-plus/raw/master/aalto-space-plus.user.js
@@ -22,11 +22,13 @@
       method: "GET",
       url: "https://simonaatula.fi/dev/aalto-space-types.json",
       onload: function(response) {
-        let json = JSON.parse(response.responseText)
-        if(json != null){
+        try {
+          let json = JSON.parse(response.responseText)
           GM_setValue('updated', (new Date()).toDateString())
           GM_setValue('types', json);
           if($.isEmptyObject(spaceTypes)){ location.reload() }
+        } catch(e) {
+          console.log("Update failed")
         }
       }
     })
