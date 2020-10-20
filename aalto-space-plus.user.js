@@ -1,59 +1,41 @@
 // ==UserScript==
 // @name         Aalto Space Plus
 // @namespace    https://simonaatula.fi/
-// @version      0.5.2
+// @version      0.5.3
 // @description  Makes browsing Aalto Space easier
 // @author       Simo Naatula
 // @updateURL    https://github.com/naatula/aalto-space-plus/raw/master/aalto-space-plus.user.js
 // @match        https://booking.aalto.fi/aaltospace/*
-// @grant        none
+// @grant        GM_xmlhttpRequest
+// @grant        GM_setValue
+// @grant        GM_getValue
+// @connect      simonaatula.fi
+//
 // ==/UserScript==
 /* global $ */
 
 (function(){
+  let spaceTypes = GM_getValue('types', null)
+  if(spaceTypes == null) { spaceTypes = {} }
 
-  const spaceTypes = new Map([
-    ['A034 R001', 2],
-    ['M134 R001', 2],
-    ['M233 R001', 1],
-    ['M234 R001', 1],
-    ['U250a R001', 2],
-    ['U264 R001', 2],
-    ['U358 R001', 2],
-    ['U405a R001', 1],
-    ['U406a R001', 2],
-    ['U406b R001', 2],
-    ['Y228a R001', 2],
-    ['Y228b R001', 2],
-    ['Y229a R001', 2],
-    ['Y229c R001', 2],
-    ['Y307 R001', 2],
-    ['Y307a R001', 2],
-    ['Y308 R001', 1],
-    ['Y309b R001', 1],
-    ['Y313 R001', 1],
-    ['M322 R001', 1],
-    ['Y346 R001', 2],
-    ['Y405 R001', 1],
-    ['M102 R028', 2],
-    ['A133 R030', 2],
-    ['C206 R030', 2],
-    ['2006 R037', 1],
-    ['A302 R011', 2],
-    ['C301 R011', 1],
-    ['D311 R011', 2],
-    ['201 R008', 1],
-    ['202 R008', 2],
-    ['214 R008', 2],
-    ['106 R015', 3],
-    ['107 R015', 3],
-    ['108 R015', 3],
-    ['109 R015', 3],
-    ['113 R015', 2],
-    ['204 R015', 1]])
+  if(Math.floor((new Date()).getTime() / 1000) - GM_getValue('updated', 0) > 36000){
+    GM_xmlhttpRequest({
+      method: "GET",
+      url: "https://simonaatula.fi/dev/aalto-space-types.json",
+      onload: function(response) {
+        let json = JSON.parse(response.responseText)
+        if(json != null){
+          GM_setValue('updated', Math.floor((new Date()).getTime() / 1000))
+          GM_setValue('types', json);
+          console.log(spaceTypes)
+          if($.isEmptyObject(spaceTypes)){ location.reload() }
+        }
+      }
+    })
+  }
 
   function getSpaceType(id, buildingId = new URLSearchParams(window.location.search).get('building_id')){
-    let r = spaceTypes.get(`${id} ${buildingId}`)
+    let r = spaceTypes[`${id} ${buildingId}`]
     if(r == null){ return 0 } else { return r }
   }
 
@@ -199,7 +181,9 @@
       let line = card.find('.caption p')
       var building = new URLSearchParams(card.find('a')[0].href).get('building_id')
       var existingTypes = []
-      spaceTypes.forEach(function(v,k){
+      Object.entries(spaceTypes).forEach(function(arr){
+        let k = arr[0]
+        let v = arr[1]
         if(k.split(' ')[1] == building){
           existingTypes[v] = true
         }
