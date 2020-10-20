@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Aalto Space Plus
 // @namespace    https://simonaatula.fi/
-// @version      0.5.1
+// @version      0.5.2
 // @description  Makes browsing Aalto Space easier
 // @author       Simo Naatula
 // @updateURL    https://github.com/naatula/aalto-space-plus/raw/master/aalto-space-plus.user.js
@@ -132,10 +132,13 @@
     }
   }
 
-  function tagGenerator(type, count = 0){
+  function tagGenerator(type, count = -1){
     let string = [['Other','Muu'], ['Silent','Hiljainen'], ['Shared','Jaettu'], ['Group','Ryhmätyö'],][type][lang]
-    let color = ["555","753bbd","286090","3c763d"][type]
-    if(count){
+    let color = ['555','753bbd','286090','3c763d'][type]
+    if(count==0){
+      color = 'bbb'
+    }
+    if(count > -1){
       return ` <span class="badge" style="font-weight: inherit; background: #${color};">${count} ⨯ ${string}</span>`
     } else {
       return ` <span class="badge" style="font-weight: inherit; background: #${color};">${string}</span>`
@@ -156,7 +159,7 @@
           card.find('.stat-label-' + status + ' .stat-label')[0].innerText = spaces.get(status)
         })
 
-        let text = ['No available spaces', 'Ei tiloja saatavilla'][lang]
+        let text = ['No reservable spaces', 'Ei varattavia tiloja'][lang]
         card.find('.ratings').html('<p></p>')
         let textElement = card.find('.ratings p')[0]
         $(textElement).css('height', '3em')
@@ -164,7 +167,11 @@
         spaceCards.filter(function(index){
           let type = getSpaceType($(this).find('h4 + p').text().split(' ')[0])
           if(isReservable($(this))){
-            availableCounts[type] = (availableCounts[type] || 0) + 1
+            if($(this).find('.caption .stat-label-booked').length == 0){
+              availableCounts[type] = (availableCounts[type] || 0) + 1
+            } else {
+              availableCounts[type] = availableCounts[type] || 0
+            }
           }
         })
         if(availableCounts.length == 0){
