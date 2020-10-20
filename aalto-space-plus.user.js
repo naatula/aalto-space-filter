@@ -15,19 +15,16 @@
 /* global $ */
 
 (function(){
-  let spaceTypes = GM_getValue('types', null)
-  if(spaceTypes == null) { spaceTypes = {} }
 
-  if(Math.floor((new Date()).getTime() / 1000) - GM_getValue('updated', 0) > 36000){
+  function updateTypes(){
     GM_xmlhttpRequest({
       method: "GET",
       url: "https://simonaatula.fi/dev/aalto-space-types.json",
       onload: function(response) {
         let json = JSON.parse(response.responseText)
         if(json != null){
-          GM_setValue('updated', Math.floor((new Date()).getTime() / 1000))
+          GM_setValue('updated', (new Date()).toDateString())
           GM_setValue('types', json);
-          console.log(spaceTypes)
           if($.isEmptyObject(spaceTypes)){ location.reload() }
         }
       }
@@ -202,6 +199,12 @@
 
   setFooter()
   applyGridStyles()
+
+  let spaceTypes = GM_getValue('types', {})
+  if((new Date()).toDateString() != GM_getValue('updated')){
+    updateTypes()
+  }
+
   let query = window.location.search
   let languageString = new URLSearchParams($('nav.navbar .container ul.nav.navbar-nav.pull-right li.active a')[0].href).get('language')
   var lang = 0
