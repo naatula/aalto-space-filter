@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Aalto Space Plus
 // @namespace    https://simonaatula.fi/
-// @version      0.5.6
+// @version      0.5.7
 // @description  Makes browsing Aalto Space easier
 // @author       Simo Naatula
 // @updateURL    https://github.com/naatula/aalto-space-plus/raw/master/aalto-space-plus.user.js
@@ -17,18 +17,24 @@
 
 (function(){
 
-  function updateTypes(){
+  function updateAndRunMain(){
     GM_xmlhttpRequest({
       method: "GET",
       url: "https://simonaatula.fi/dev/aalto-space-types.json",
       onload: function(response) {
         try {
           let json = JSON.parse(response.responseText)
-          GM_setValue('updated', (new Date()).toDateString())
-          GM_setValue('types', json);
-          if($.isEmptyObject(spaceTypes)){ location.reload() }
+          if(json['version'] == 1){
+            GM_setValue('updated', (new Date()).toDateString())
+            GM_setValue('types', json['data']);
+            spaceTypes = json['data']
+          } else {
+            console.log("Version mismatch")
+          }
+          main()
         } catch(e) {
           console.log("Update failed")
+          main()
         }
       }
     })
@@ -200,27 +206,32 @@
     })
   }
 
+  function main(){
+    let query = window.location.search
+    let languageString = new URLSearchParams($('nav.navbar .container ul.nav.navbar-nav.pull-right li.active a')[0].href).get('language')
+    if(languageString == 'fin'){ lang = 1 }
+    if(query.includes('page=building')){
+      if(query.includes('room_id=')){
+        spacePage()
+      } else if(query.includes('floor_id=')){
+        spaceList()
+      } else {
+        floorList()
+      }
+    } else if(['/aaltospace/', '/aaltospace/index.php'].includes(window.location.pathname)){
+      buildingList()
+    }
+  }
+
   setFooter()
   applyGridStyles()
 
+  var lang = 0
   let spaceTypes = GM_getValue('types', {})
   if((new Date()).toDateString() != GM_getValue('updated')){
-    updateTypes()
+    updateAndRunMain()
+  } else {
+    main()
   }
 
-  let query = window.location.search
-  let languageString = new URLSearchParams($('nav.navbar .container ul.nav.navbar-nav.pull-right li.active a')[0].href).get('language')
-  var lang = 0
-  if(languageString == 'fin'){ lang = 1 }
-  if(query.includes('page=building')){
-    if(query.includes('room_id=')){
-      spacePage()
-    } else if(query.includes('floor_id=')){
-      spaceList()
-    } else {
-      floorList()
-    }
-  } else if(['/aaltospace/', '/aaltospace/index.php'].includes(window.location.pathname)){
-    buildingList()
-  }
 })()
