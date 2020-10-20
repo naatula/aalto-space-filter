@@ -124,6 +124,7 @@
 
   function addTagToCard(card){
     let line = card.find('h4 + p')
+    line.css('max-height', 'none')
     let id = line.text().split(' ')[0]
     let type = getSpaceType(id)
     if(type > 0){
