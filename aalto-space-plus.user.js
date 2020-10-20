@@ -10,6 +10,7 @@
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @connect      simonaatula.fi
+// @connect      github.com
 //
 // ==/UserScript==
 /* global $ */
