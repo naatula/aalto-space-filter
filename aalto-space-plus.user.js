@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Aalto Space Plus
 // @namespace    https://simonaatula.fi/
-// @version      0.5.7
+// @version      0.5.8
 // @description  Makes browsing Aalto Space easier
 // @author       Simo Naatula
 // @updateURL    https://github.com/naatula/aalto-space-plus/raw/master/aalto-space-plus.user.js
@@ -24,10 +24,10 @@
       onload: function(response) {
         try {
           let json = JSON.parse(response.responseText)
-          if(json['version'] == 1){
+          if(json.version == 1){
             GM_setValue('updated', (new Date()).toDateString())
-            GM_setValue('types', json['data']);
-            spaceTypes = json['data']
+            GM_setValue('types', json.data);
+            spaceTypes = json.data
           } else {
             console.log('Version mismatch')
           }
