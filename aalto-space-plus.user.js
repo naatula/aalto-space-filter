@@ -154,12 +154,10 @@
         var availableCounts = []
         spaceCards.filter(function(index){
           let type = getSpaceType($(this).find('h4 + p').text().split(' ')[0])
-          if(isReservable($(this))){
-            if($(this).find('.caption .stat-label-booked').length == 0){
-              availableCounts[type] = (availableCounts[type] || 0) + 1
-            } else {
-              availableCounts[type] = availableCounts[type] || 0
-            }
+          if(isReservable($(this)) && $(this).find('.caption .stat-label-booked').length == 0){
+            availableCounts[type] = (availableCounts[type] || 0) + 1
+          } else if(type) {
+            availableCounts[type] = availableCounts[type] || 0
           }
         })
         if(availableCounts.length == 0){
