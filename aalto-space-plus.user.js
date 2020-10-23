@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Aalto Space Plus
 // @namespace    https://simonaatula.fi/
-// @version      0.5.8
+// @version      0.5.9
 // @description  Makes browsing Aalto Space easier
 // @author       Simo Naatula
 // @updateURL    https://github.com/naatula/aalto-space-plus/raw/master/aalto-space-plus.user.js
@@ -196,7 +196,7 @@
         let tags = $('<p></p>')
         line.after(tags)
         existingTypes.forEach(function(type, index){
-          tags.append(tagGenerator(index))
+          tags.prepend(tagGenerator(index))
         })
       } else {
         card.parent().append(card)
