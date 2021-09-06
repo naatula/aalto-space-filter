@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Aalto Space Plus
 // @namespace    https://simonaatula.fi/
-// @version      0.5.9
+// @version      0.5.10
 // @description  Makes browsing Aalto Space easier
 // @author       Simo Naatula
 // @updateURL    https://github.com/naatula/aalto-space-plus/raw/master/aalto-space-plus.user.js
@@ -24,7 +24,7 @@
       onload: function(response) {
         try {
           let json = JSON.parse(response.responseText)
-          if(json.version == 1){
+          if(json.version == 2){
             GM_setValue('updated', (new Date()).toDateString())
             GM_setValue('types', json.data);
             spaceTypes = json.data
@@ -41,7 +41,7 @@
   }
 
   function getSpaceType(id, buildingId = new URLSearchParams(window.location.search).get('building_id')){
-    let r = spaceTypes[`${id} ${buildingId}`]
+    let r = spaceTypes[`${buildingId}`][`${id}`]
     if(r == null){ return 0 } else { return r }
   }
 
@@ -185,13 +185,13 @@
       let line = card.find('.caption p')
       var building = new URLSearchParams(card.find('a')[0].href).get('building_id')
       var existingTypes = []
-      Object.entries(spaceTypes).forEach(function(arr){
-        let k = arr[0]
-        let v = arr[1]
-        if(k.split(' ')[1] == building){
+      if(spaceTypes[building]){
+        Object.entries(spaceTypes[building]).forEach(function(arr){
+          let k = arr[0]
+          let v = arr[1]
           existingTypes[v] = true
-        }
-      })
+        })
+      }
       if(existingTypes.length){
         let tags = $('<p></p>')
         line.after(tags)
